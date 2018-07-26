@@ -9,8 +9,13 @@
 ```
 -->
 ```html
-<item-overlay-ops></item-overlay-ops>
+<item-overlay-ops add edit remove duplicate move edit-mode>
+  <paper-card heading="Title of the thing" image="stock.jpg" elevation="2" animated-shadow="false">
+    <div class="card-content">This is some content of a card</div>
+  </paper-card>
+</item-overlay-ops>
 ```
+[Video talking about this element](https://www.youtube.com/watch?v=Fxpdxn5mu_I)
 
 [![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/LRNWebComponents/item-overlay-ops)
 
