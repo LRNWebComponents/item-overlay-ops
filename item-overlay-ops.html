@@ -129,18 +129,18 @@ A LRN element
     </style>
     <div id="container">
       <div class="ops">
-        <paper-icon-button icon="icons:add" id="add" hidden$="[[!add]]"></paper-icon-button>
-        <paper-icon-button icon="icons:create" id="edit" hidden$="[[!edit]]"></paper-icon-button>
-        <paper-icon-button icon="icons:swap-horiz" id="move" hidden$="[[!move]]"></paper-icon-button>
-        <paper-icon-button icon="icons:delete" id="remove" hidden$="[[!remove]]"></paper-icon-button>
-        <paper-icon-button icon="icons:content-copy" id="duplicate" hidden$="[[!duplicate]]"></paper-icon-button>
+        <paper-icon-button icon="icons:add" id="add" hidden$="[[!add]]" title="Add to this"></paper-icon-button>
+        <paper-icon-button icon="icons:create" id="edit" hidden$="[[!edit]]" title="Edit this"></paper-icon-button>
+        <paper-icon-button icon="icons:swap-horiz" id="move" hidden$="[[!move]]" title="Move this"></paper-icon-button>
+        <paper-icon-button icon="icons:delete" id="remove" hidden$="[[!remove]]" title="Delete this"></paper-icon-button>
+        <paper-icon-button icon="icons:content-copy" id="duplicate" hidden$="[[!duplicate]]" title="Duplicate this"></paper-icon-button>
       </div>
       <div class="active-op">[[activeTitle]]</div>
       <div id="workingarea" class$="[[activeOp]]">
-        <paper-button id="option1">
+        <paper-button id="option1" title="[[__option1Text]]">
           <iron-icon icon="[[__option1Icon]]"></iron-icon>
         </paper-button>
-        <paper-button id="option2">
+        <paper-button id="option2" title="[[__option2Text]]">
           <iron-icon icon="[[__option2Icon]]"></iron-icon>
         </paper-button>
       </div>
@@ -266,13 +266,22 @@ A LRN element
         // we switch icons for these
         switch (this.activeOp) {
           case 'remove':
+            this.__option1Icon = 'icons:check';
+            this.__option1Text = 'Confirm deleting this';
+            this.__option2Icon = 'icons:clear';
+            this.__option2Text = 'Cancel';
+          break;
           case 'duplicate':
             this.__option1Icon = 'icons:check';
+            this.__option1Text = 'Confirm duplicating this';
             this.__option2Icon = 'icons:clear';
+            this.__option2Text = 'Cancel';
           break;
           case 'move':
             this.__option1Icon = 'icons:arrow-back';
+            this.__option1Text = 'Move item left';
             this.__option2Icon = 'icons:arrow-forward';
+            this.__option2Text = 'Move item right';
           break;
         }
         // let others know there's an event here
