@@ -10,6 +10,7 @@
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-card/paper-card.html">
     <link rel="import" href="../item-overlay-ops.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
@@ -20,7 +21,23 @@
       <h3>Basic item-overlay-ops demo</h3>
       <demo-snippet>
         <template>
-          <item-overlay-ops></item-overlay-ops>
+          <item-overlay-ops add edit remove duplicate move edit-mode>
+            <paper-card heading="Title of the thing" image="stock.jpg" elevation="2" animated-shadow="false">
+              <div class="card-content"></div>
+            </paper-card>
+          </item-overlay-ops>
+
+          <item-overlay-ops add edit remove duplicate move>
+            <paper-card heading="Title of the thing" image="stock.jpg" elevation="2" animated-shadow="false">
+              <div class="card-content"></div>
+            </paper-card>
+          </item-overlay-ops>
+
+          <item-overlay-ops edit duplicate move edit-mode>
+            <paper-card heading="Title of the thing" image="stock.jpg" elevation="2" animated-shadow="false">
+              <div class="card-content"></div>
+            </paper-card>
+          </item-overlay-ops>
         </template>
       </demo-snippet>
     </div>

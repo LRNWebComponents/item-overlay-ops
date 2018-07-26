@@ -1,7 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../materializecss-styles/materializecss-styles.html">
-<link rel="import" href="../hax-body-behaviors/hax-body-behaviors.html">
-<link rel="import" href="../schema-behaviors/schema-behaviors.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
 <!--
 `item-overlay-ops`
 A LRN element
@@ -19,73 +19,293 @@ A LRN element
     <style>
       :host {
         display: block;
+        outline: none;
+      }
+      #container {
+        display: none;
+        opacity: 0;
+        background-color: transparent;
+        transition: background-color .6s linear, visibility .6s linear, opacity .6s linear;
+        visibility: hidden;
+      }
+      :host[edit-mode] #container {
+        display: block;
+        opacity: .4;
+        visibility: visible;
+        background-color: var(--item-overlay-ops, #999999);
+        position: absolute;
+        z-index: 1;
+      }
+      :host[edit-mode] #container:hover,
+      :host[edit-mode] #container:focus,
+      :host[focused] #container {
+        opacity: .8;
+        background-color: var(--item-overlay-ops, #ffffff);
+      }
+      .ops {
+        width: 100%;
+        height: 39px;
+        padding: 0;
+        margin: 0;
+        border-bottom: 1px solid rgba(100, 100, 100, .4);
+        text-align: center;
+      }
+      .ops paper-icon-button {
+        display: inline-flex;
+        width: 30px;
+        height: 30px;
+        padding: 2px;
+        margin: 5px 8px;
+        color: #999999;
+      }
+      .ops paper-icon-button.active {
+        color: #000000;
+        background-color: rgba(255, 255, 255, .6);
+        border-radius: 50%;
+      }
+      .active-op {
+        text-transform:capitalize;
+        margin: 0;
+        height: 40px;
+        line-height: 40px;
+        font-size: 20px;
+        text-align: center;
+      }
+      #workingarea {
+        width: 100%;
+        padding: 0;
+        margin: 0 auto;
+        align-content: center;
+      }
+      #workingarea paper-button {
+        width: 50%;
+        display: inline-flex;
+        min-width: unset;
+        padding: 8px;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+      }
+      #workingarea paper-button iron-icon {
+        width: 50px;
+        height: 50px;
+      }
+      #workingarea #option1 {
+        background-color: rgba(100, 255, 100, .6);
+      }
+      #workingarea #option2 {
+        background-color: rgba(255, 100, 100, .6);
+      }
+      #workingarea #option1:hover,
+      #workingarea #option1:focus {
+        background-color: rgba(100, 255, 100, 1);
+      }
+      #workingarea #option2:hover,
+      #workingarea #option2:focus {
+        background-color: rgba(255, 100, 100, 1);
+      }
+      #workingarea {
+        display: none;
+      }
+      #workingarea.move {
+        display: flex;
+      }
+      #workingarea.move #option1,
+      #workingarea.move #option2 {
+        background-color: rgba(200, 200, 200, .5);
+      }
+      #workingarea.move #option1:hover,
+      #workingarea.move #option1:focus,
+      #workingarea.move #option2:hover,
+      #workingarea.move #option2:focus {
+        background-color: rgba(200, 200, 200, 1);
+      }
+      #workingarea.remove {
+        display: flex;
+      }
+      #workingarea.duplicate {
+        display: flex;
       }
     </style>
-    <h2>[[title]]</h2>
+    <div id="container">
+      <div class="ops">
+        <paper-icon-button icon="icons:add" id="add" hidden$="[[!add]]"></paper-icon-button>
+        <paper-icon-button icon="icons:create" id="edit" hidden$="[[!edit]]"></paper-icon-button>
+        <paper-icon-button icon="icons:swap-horiz" id="move" hidden$="[[!move]]"></paper-icon-button>
+        <paper-icon-button icon="icons:delete" id="remove" hidden$="[[!remove]]"></paper-icon-button>
+        <paper-icon-button icon="icons:content-copy" id="duplicate" hidden$="[[!duplicate]]"></paper-icon-button>
+      </div>
+      <div class="active-op">[[activeTitle]]</div>
+      <div id="workingarea" class$="[[activeOp]]">
+        <paper-button id="option1">
+          <iron-icon icon="[[__option1Icon]]"></iron-icon>
+        </paper-button>
+        <paper-button id="option2">
+          <iron-icon icon="[[__option2Icon]]"></iron-icon>
+        </paper-button>
+      </div>
+    </div>
+    <slot></slot>
   </template>
-
   <script>
     Polymer({
-
       is: 'item-overlay-ops',
-      behaviors: [HAXBehaviors.PropertiesBehaviors, MaterializeCSSBehaviors.ColorBehaviors, SchemaBehaviors.Schema],
+      listeners: {
+        'add.tap': '_opTap',
+        'edit.tap': '_opTap',
+        'move.tap': '_opTap',
+        'focusin': '_inFocus',
+        'focusout': '_outFocus',
+        'remove.tap': '_opTap',
+        'duplicate.tap': '_opTap',
+        'option1.tap': '_optionSelected',
+        'option2.tap': '_optionSelected',
+      },
+      hostAttributes: {
+        'tabindex': '0',
+      },
       properties: {
         /**
-         * Title
+         * Edit mode whether it is shown or not
          */
-        title: {
+        editMode: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false,
+        },
+        /**
+         * Edit mode whether it is shown or not
+         */
+        focused: {
+          type: Boolean,
+          reflectToAttribute: true,
+          value: false,
+        },
+        /**
+         * Title to present of active option
+         */
+        activeTitle: {
           type: String,
+          value: 'Select an option',
+        },
+        /**
+         * Active operation
+         */
+        activeOp: {
+          type: String,
+        },
+        /**
+         * Add opertaions
+         */
+        add: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * Edit opertaions
+         */
+        edit: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * Move opertaions
+         */
+        move: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * Remove opertaions
+         */
+        remove: {
+          type: Boolean,
+          value: false,
+        },
+        /**
+         * Duplicate opertaions
+         */
+        duplicate: {
+          type: Boolean,
+          value: false,
         },
       },
       /**
-       * Attached to the DOM, now fire.
+       * Attached life cycle
        */
-      attached: function() {
-        // Establish hax property binding
-        let props = {
-          'canScale': true,
-          'canPosition': true,
-          'canEditSource': false,
-          'gizmo': {
-            'title': 'Sample gizmo',
-            'description': 'The user will be able to see this for selection in a UI.',
-            'icon': 'av:play-circle-filled',
-            'color': 'grey',
-            'groups': ['Video', 'Media'],
-            'handles': [
-              {
-                'type': 'video',
-                'url': 'source'
-              }
-            ],
-            'meta': {
-              'author': 'Your organization on github'
-            }
-          },
-          'settings': {
-            'quick': [
-              {
-                'property': 'title',
-                'title': 'Title',
-                'description': 'The title of the element',
-                'inputMethod': 'textfield',
-                'icon': 'editor:title',
-              },
-            ],
-            'configure': [
-              {
-                'property': 'title',
-                'title': 'Title',
-                'description': 'The title of the element',
-                'inputMethod': 'textfield',
-                'icon': 'editor:title',
-              },
-            ],
-            'advanced': [
-            ]
-          }
+      attached: function () {
+        // delay is enough to get the height correct
+        setTimeout(() => {
+          let rect = this.getBoundingClientRect();
+          this.$.container.style.width = rect.width + 'px';
+          this.$.container.style.height = rect.height + 'px';
+          this.$.workingarea.style.height = (rect.height - 80) + 'px';
+        }, 1);
+        window.addEventListener('resize', this._windowResize.bind(this));
+      },
+      _windowResize: function (e) {
+        let rect = this.getBoundingClientRect();
+        this.$.container.style.width = rect.width + 'px';
+        this.$.container.style.height = rect.height + 'px';
+        this.$.workingarea.style.height = (rect.height - 80) + 'px';
+      },
+      /**
+       * Support tapping the buttons in the top
+       */
+      _opTap: function (e) {
+        let normalizedEvent = Polymer.dom(e);
+        let local = normalizedEvent.localTarget;
+        this.activeTitle = local.getAttribute('id');
+        this.activeOp = local.getAttribute('id');
+        this.$.add.classList.remove('active');
+        this.$.edit.classList.remove('active');
+        this.$.move.classList.remove('active');
+        this.$.remove.classList.remove('active');
+        this.$.duplicate.classList.remove('active');
+        local.classList.add('active');
+        // we switch icons for these
+        switch (this.activeOp) {
+          case 'remove':
+          case 'duplicate':
+            this.__option1Icon = 'icons:check';
+            this.__option2Icon = 'icons:clear';
+          break;
+          case 'move':
+            this.__option1Icon = 'icons:arrow-back';
+            this.__option2Icon = 'icons:arrow-forward';
+          break;
+        }
+        // let others know there's an event here
+        this.fire('item-overlay-op-changed', this.activeOp);
+      },
+      /**
+       * Set element reflected focus so we can get the whole thing
+       */
+      _inFocus: function (e) {
+        if (this.editMode) {
+          this.focused = true;
+        }
+      },
+      /**
+       * Drop element reflection when all focus offs are fired
+       */
+      _outFocus: function (e) {
+        if (this.editMode) {
+          this.focused = false;
+        }
+      },
+      /**
+       * fire event because an option was selected.
+       */
+      _optionSelected: function (e) {
+        let normalizedEvent = Polymer.dom(e);
+        let local = normalizedEvent.localTarget;
+        // fire that an option was selected and about what operation
+        let ops = {
+          'operation': this.activeOp,
+          'option': local.getAttribute('id')
         };
-        this.setHaxProperties(props);
+        this.fire('item-overlay-option-selected', ops);
       },
     });
   </script>
