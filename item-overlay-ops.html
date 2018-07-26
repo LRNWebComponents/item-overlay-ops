@@ -257,11 +257,7 @@ A LRN element
         let local = normalizedEvent.localTarget;
         this.activeTitle = local.getAttribute('id');
         this.activeOp = local.getAttribute('id');
-        this.$.add.classList.remove('active');
-        this.$.edit.classList.remove('active');
-        this.$.move.classList.remove('active');
-        this.$.remove.classList.remove('active');
-        this.$.duplicate.classList.remove('active');
+        this._resetActive();
         local.classList.add('active');
         // we switch icons for these
         switch (this.activeOp) {
@@ -309,12 +305,28 @@ A LRN element
       _optionSelected: function (e) {
         let normalizedEvent = Polymer.dom(e);
         let local = normalizedEvent.localTarget;
+        // don't reset for movement, just confirm / reject actions
+        if (this.activeOp != 'move') {
+          this._resetActive();
+          this.activeOp = null;
+          this.activeTitle = 'Select an option';
+        }
         // fire that an option was selected and about what operation
         let ops = {
           'operation': this.activeOp,
           'option': local.getAttribute('id')
         };
         this.fire('item-overlay-option-selected', ops);
+      },
+      /**
+       * Reset the active selections
+       */
+      _resetActive: function () {
+        this.$.add.classList.remove('active');
+        this.$.edit.classList.remove('active');
+        this.$.move.classList.remove('active');
+        this.$.remove.classList.remove('active');
+        this.$.duplicate.classList.remove('active');
       },
     });
   </script>
