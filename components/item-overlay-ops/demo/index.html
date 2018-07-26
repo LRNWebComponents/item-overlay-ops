@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>item-overlay-ops demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-card/paper-card.html">
+    <link rel="import" href="../item-overlay-ops.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic item-overlay-ops demo</h3>
+      <demo-snippet>
+        <template>
+          <item-overlay-ops add edit remove duplicate move edit-mode>
+            <paper-card heading="Title of the thing" image="stock.jpg" elevation="2" animated-shadow="false">
+              <div class="card-content"></div>
+            </paper-card>
+          </item-overlay-ops>
+
+          <item-overlay-ops add edit remove duplicate move>
+            <paper-card heading="Title of the thing" image="stock.jpg" elevation="2" animated-shadow="false">
+              <div class="card-content"></div>
+            </paper-card>
+          </item-overlay-ops>
+
+          <item-overlay-ops edit duplicate move edit-mode>
+            <paper-card heading="Title of the thing" image="stock.jpg" elevation="2" animated-shadow="false">
+              <div class="card-content"></div>
+            </paper-card>
+          </item-overlay-ops>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>
